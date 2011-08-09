@@ -61,7 +61,10 @@ public class Env {
     public String toString() {
     	StringBuilder b = new StringBuilder();
     	for (Object k:table.keySet()) {
-    		b.append(k+"="+table.get(k).value);
+    		Pair vp=table.get(k);
+    		//b.append(k+"="+vp.env.dereference( vp.value ).value);
+    		//b.append(k+"="+vp.env.a(vp.value));
+    		b.append(k+"="+a(k));
     	}
     	return b+"";
     }

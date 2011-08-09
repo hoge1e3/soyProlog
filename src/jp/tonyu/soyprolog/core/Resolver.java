@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
+import jp.tonyu.util.Ref;
+
 public class Resolver {
 	public static boolean unify(Object x, Env x_env, Object y, Env y_env, List<Pair> trail, Env tmp_env) {
 		debug("unify - ");
@@ -91,13 +93,13 @@ public class Resolver {
 	}
 	public static void resolve(List goals, final EnvIter it) {
 		final Env env = new Env();
-		_resolve_body(Cons.create(goals), env, /*(List)Collections.singletonList(false),*/ new Runnable() {
+		_resolve_body(Cons.create(goals), env, Ref.create(false), new Runnable() {
 			public void run() {
 				it.yield(env);
 			}
 		});
 	}
-	static void _resolve_body(Cons body, final Env env, /*List cut ,*/ final Runnable it) {
+	static void _resolve_body(Cons body, final Env env, final Ref<Boolean> cut , final Runnable it) {
 		if (body==null) {
 			it.run();
 		} else {
@@ -105,45 +107,41 @@ public class Resolver {
 			final Cons rest=(Cons)body.cdr;
 			debug("resolve: "+goal + " - "+rest);
 
-			/*if goal == :CUT
-            _resolve_body(rest, env, cut) {
-                yield
-            }
-            cut[0] = true*/
-			//else
-			Env d_env = new Env();
-			//d_cut = [false]
-			for (Def d :goal.pred.defs) {
-				Goal d_head=d.head ;  Object d_body=d.body;
-				//break if d_cut[0] or cut[0]
-				List<Pair> trail = new Vector<Pair>();
-				if (unify(goal, env, d_head, d_env, trail, d_env)) {
-					if (d_body instanceof CallbackEnvIter) {
-						CallbackEnvIter d_b=(CallbackEnvIter) d_body;
-						if (d_b.run(new CallbackEnv(d_env, trail))) {
-							_resolve_body(rest, env, /*cut,*/ it);/* {
-                                yield
-                            }*/
-						}
-					} else {
-						Cons cb=(Cons)d_body;
-						_resolve_body(cb, d_env/*, d_cut*/ ,new Runnable() {
-							@Override
-							public void run() {
-								_resolve_body(rest, env, /*cut*/ it);/* {
-                                yield
-                            	}*/
-								// d_cut[0] ||= cut[0]
+			if (goal.equals(Goal.CUT)) {
+				_resolve_body(rest, env, cut, it);
+				cut.set(true);
+			} else {
+				Env d_env = new Env();
+				final Ref<Boolean> d_cut = Ref.create(false);
+				for (Def d :goal.pred.defs) {
+					Goal d_head=d.head ;  Object d_body=d.body;
+					//break if d_cut[0] or cut[0]
+					if (d_cut.get() || cut.get()) break;
+					List<Pair> trail = new Vector<Pair>();
+					if (unify(goal, env, d_head, d_env, trail, d_env)) {
+						if (d_body instanceof CallbackEnvIter) {
+							CallbackEnvIter d_b=(CallbackEnvIter) d_body;
+							if (d_b.run(new CallbackEnv(d_env, trail))) {
+								_resolve_body(rest, env, cut, it);
 							}
-						});
+						} else {
+							Cons cb=(Cons)d_body;
+							_resolve_body(cb, d_env, d_cut ,new Runnable() {
+								@Override
+								public void run() {
+									_resolve_body(rest, env, cut, it);
+									d_cut.set(d_cut.get() || cut.get());
+								}
+							});
+						}
 					}
+					for (Pair x_x_env : trail) {
+						Object x=x_x_env.value;
+						Env x_env=x_x_env.env;
+						x_env.delete(x);
+					}
+					d_env.clear();
 				}
-				for (Pair x_x_env : trail) {
-					Object x=x_x_env.value;
-					Env x_env=x_x_env.env;
-					x_env.delete(x);
-				}
-				d_env.clear();
 			}
 		}
 	}
