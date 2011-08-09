@@ -1,5 +1,6 @@
 package jp.tonyu.soyprolog.core;
 
+import java.util.List;
 import java.util.Vector;
 
 public class Pred {
@@ -12,7 +13,7 @@ public class Pred {
     public String toString() {
     	return name;
     }
-    public Object a(Object args) {
+    public Goal a(List args) {
         return new Goal(this, args);
     }
 }

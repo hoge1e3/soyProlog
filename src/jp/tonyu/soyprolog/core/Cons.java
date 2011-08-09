@@ -14,7 +14,7 @@ public class Cons {
 		this.cdr = cdr;
 	}
 	public static Cons create(List ary, int i) {
-		if (ary.size()<=i) return null;
+		if (ary==null || ary.size()<=i) return null;
 		return new Cons(ary.get(i),create(ary,i+1));
 	}
 	@Override

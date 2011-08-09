@@ -8,4 +8,8 @@ public class Pair {
 		this.value = value;
 		this.env = env;
 	}
+	@Override
+	public String toString() {
+		return "("+value+" - "+env+")";
+	}
 }

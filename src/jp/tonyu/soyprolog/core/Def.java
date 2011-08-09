@@ -1,12 +1,12 @@
 package jp.tonyu.soyprolog.core;
 
 public class Def {
-	Goal g;
-	Object cdr;
-	public Def(Goal g, Object cdr) {
+	Goal head;
+	Object body;
+	public Def(Goal head, Object body) {
 		super();
-		this.g = g;
-		this.cdr = cdr;
+		this.head = head;
+		this.body = body;
 	}
 
 }

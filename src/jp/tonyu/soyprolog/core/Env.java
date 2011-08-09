@@ -39,7 +39,7 @@ public class Env {
         if (t instanceof Goal) {
 //          when Goal then Goal.new(t.pred, env[t.args])
 			Goal g = (Goal) t;
-			return new Goal(g.pred, env.a(g.args));
+			return new Goal(g.pred, (List)env.a(g.args));
 		}
         if (t instanceof Cons) {
 //          when Cons then cons(env[t[0]], env[t[1]])
@@ -56,5 +56,9 @@ public class Env {
 			return res;
 		}
         throw new RuntimeException("not - "+t);
+    }
+    @Override
+    public String toString() {
+    	return table.toString();
     }
 }

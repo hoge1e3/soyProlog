@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Goal {
     Pred pred;
-    Object args;
-    public Goal(Pred pred, Object args) {
+    List args;
+    public Goal(Pred pred, List args) {
     	this.pred=pred;
     	this.args=args;
     }
@@ -17,7 +17,10 @@ public class Goal {
     }
     @Override
     public String toString() {
-    	return pred+" "+args;
+    	return pred+"("+args+")";
     }
+	public void si() {
+        pred.defs.add(  new Def( this, Cons.create(null)) );
+	}
 
 }
