@@ -6,7 +6,10 @@ import java.util.Vector;
 
 public class Resolver {
 	public static boolean unify(Object x, Env x_env, Object y, Env y_env, List<Pair> trail, Env tmp_env) {
-		debug("unify - "+x+" "+x_env+" "+y+" "+y_env+" "+trail+" "+tmp_env);
+		debug("unify - ");
+		debug("x="+x+"  env="+x_env);
+		debug("y="+y+"  env="+y_env);
+		debug("trail="+trail+" tmp_env="+tmp_env);
 		while(true) {
 			if (x instanceof Symbol) {
 				Pair xp = x_env.get(x);
@@ -67,7 +70,21 @@ public class Resolver {
 			}
 			debug(true);
 			return true;
+		} else if (x instanceof Cons && y instanceof Cons) {
+			Cons xc=(Cons)x;
+			Cons yc=(Cons)y;
+			if (!unify(xc.car, x_env, yc.car, y_env, trail, tmp_env)) {
+				debug(false);
+				return false;
+			}
+			if (!unify(xc.cdr, x_env, yc.cdr, y_env, trail, tmp_env)) {
+				debug(false);
+				return false;
+			}
+			debug(true);
+			return true;
 		} else {
+			if (x==null) return y==null;
 			debug(x.equals(y));
 			return x.equals(y);
 		}
@@ -131,7 +148,7 @@ public class Resolver {
 		}
 	}
 	private static void debug(Object string) {
-		System.out.println(string);
+		//System.out.println(string);
 	}
 }
 /*

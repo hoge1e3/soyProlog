@@ -55,10 +55,14 @@ public class Env {
 			}
 			return res;
 		}
-        throw new RuntimeException("not - "+t);
+        return t;
     }
     @Override
     public String toString() {
-    	return table.toString();
+    	StringBuilder b = new StringBuilder();
+    	for (Object k:table.keySet()) {
+    		b.append(k+"="+table.get(k).value);
+    	}
+    	return b+"";
     }
 }
