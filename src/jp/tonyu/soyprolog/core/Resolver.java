@@ -72,7 +72,7 @@ public class Resolver {
 			}
 			debug(true);
 			return true;
-		} else if (x instanceof Cons && y instanceof Cons) {
+		} /* Cons Comment else if (x instanceof Cons && y instanceof Cons) {
 			Cons xc=(Cons)x;
 			Cons yc=(Cons)y;
 			if (!unify(xc.car, x_env, yc.car, y_env, trail, tmp_env)) {
@@ -85,7 +85,7 @@ public class Resolver {
 			}
 			debug(true);
 			return true;
-		} else {
+		} */else {
 			if (x==null) return y==null;
 			debug(x.equals(y));
 			return x.equals(y);

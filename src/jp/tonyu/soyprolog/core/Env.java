@@ -41,11 +41,12 @@ public class Env {
 			Goal g = (Goal) t;
 			return new Goal(g.pred, (List)env.a(g.args));
 		}
+        /* Cons Comment
         if (t instanceof Cons) {
 //          when Cons then cons(env[t[0]], env[t[1]])
 			Cons c = (Cons) t;
 			return new Cons(env.a(c.car), env.a(c.cdr));
-		}
+		}*/
         if (t instanceof List) {
 //            when Array then t.collect {|e| env[e]}
 			List l = (List) t;
