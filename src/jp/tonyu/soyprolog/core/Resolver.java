@@ -121,9 +121,11 @@ public class Resolver {
 					if (unify(goal, env, d_head, d_env, trail, d_env)) {
 						if (d_body instanceof CallbackEnvIter) {
 							CallbackEnvIter d_b=(CallbackEnvIter) d_body;
-							if (d_b.run(new CallbackEnv(d_env, trail))) {
-								_resolve_body(rest, env, cut, it);
-							}
+							d_b.run(new CallbackEnv(d_env, trail, new Runnable(){
+								public void run() {
+									_resolve_body(rest, env, cut, it);
+								}
+							}));
 						} else {
 							Cons cb=(Cons)d_body;
 							_resolve_body(cb, d_env, d_cut ,new Runnable() {

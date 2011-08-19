@@ -1,7 +1,7 @@
 package jp.tonyu.soyprolog.core;
 
-public interface CallbackEnvIter {
+public interface CallbackEnvIter extends SubGoal {
 
-	public boolean run(CallbackEnv callBackEnv);
+	public void run(CallbackEnv callBackEnv);
 
 }

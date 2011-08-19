@@ -14,7 +14,7 @@ public class Goal {
     public void si(List rhs) {
         pred.defs.add(  new Def( this, Cons.create(rhs)) );
     }
-    public void calls(Object callback) {
+    public void calls(CallbackEnvIter callback) {
         pred.defs.add( new Def(this, callback) );
     }
     @Override

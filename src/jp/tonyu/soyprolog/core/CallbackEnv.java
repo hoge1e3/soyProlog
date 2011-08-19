@@ -5,10 +5,12 @@ import java.util.List;
 public class CallbackEnv {
 	Env env;
 	List trail;
+	Runnable onFound;
 
-	public CallbackEnv(Env env,List trail) {
+	public CallbackEnv(Env env,List trail,Runnable onFound) {
 		this.env=env;
 		this.trail=trail;
+		this.onFound=onFound;
 	}
 	public Object a(Object t) {
 		return env.a(t);
