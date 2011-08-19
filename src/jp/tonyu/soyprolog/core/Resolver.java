@@ -93,18 +93,18 @@ public class Resolver {
 	}
 	public static void resolve(List goals, final EnvIter it) {
 		final Env env = new Env();
-		_resolve_body(Cons.create(goals), env, Ref.create(false), new Runnable() {
+		_resolve_body(GoalList.create(goals), env, Ref.create(false), new Runnable() {
 			public void run() {
 				it.yield(env);
 			}
 		});
 	}
-	static void _resolve_body(Cons body, final Env env, final Ref<Boolean> cut , final Runnable it) {
+	static void _resolve_body(GoalList body, final Env env, final Ref<Boolean> cut , final Runnable it) {
 		if (body==null) {
 			it.run();
 		} else {
-			Goal goal=(Goal)body.car;
-			final Cons rest=(Cons)body.cdr;
+			Goal goal=body.car;
+			final GoalList rest=body.cdr;
 			debug("resolve: "+goal + " - "+rest);
 
 			if (goal.equals(Goal.CUT)) {
@@ -127,7 +127,7 @@ public class Resolver {
 								}
 							}));
 						} else {
-							Cons cb=(Cons)d_body;
+							GoalList cb=(GoalList)d_body;
 							_resolve_body(cb, d_env, d_cut ,new Runnable() {
 								@Override
 								public void run() {

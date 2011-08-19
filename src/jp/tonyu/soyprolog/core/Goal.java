@@ -1,5 +1,7 @@
 package jp.tonyu.soyprolog.core;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -12,7 +14,7 @@ public class Goal {
     	this.args=args;
     }
     public void si(List rhs) {
-        pred.defs.add(  new Def( this, Cons.create(rhs)) );
+        pred.defs.add(  new Def( this, GoalList.create(rhs)) );
     }
     public void calls(CallbackEnvIter callback) {
         pred.defs.add( new Def(this, callback) );
@@ -22,7 +24,7 @@ public class Goal {
     	return pred+"("+args+")";
     }
 	public void si() {
-        pred.defs.add(  new Def( this, Cons.create(null)) );
+        pred.defs.add(  new Def( this, GoalList.create()) );
 	}
 
 }
