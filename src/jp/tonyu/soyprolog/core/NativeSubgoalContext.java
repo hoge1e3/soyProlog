@@ -18,6 +18,12 @@ public class NativeSubgoalContext {
 	public boolean unify(Object t,Object u) {
 		return Resolver.unify(t, env, u, env, trail, env);
 	}
+	public void yield() {
+		yield.run();
+	}
+	public void put(Object key, Object value) {
+		env.put(key, value);
+	}
 }
 
 /*
