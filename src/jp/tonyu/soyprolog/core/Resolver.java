@@ -3,6 +3,7 @@ package jp.tonyu.soyprolog.core;
 import java.util.List;
 import java.util.Vector;
 
+import jp.tonyu.debug.TLog;
 import jp.tonyu.util.Ref;
 
 public class Resolver {
@@ -120,21 +121,24 @@ public class Resolver {
 			} else {
 				Env d_env = new Env();
 				final Ref<Boolean> d_cut = Ref.create(false);
-				for (Rule d :goal.pred.rules) {
-					Goal d_head=d.goal ;  Object d_body=d.subgoal;
+				List<Rule> rules = goal.getRules();
+				TLog.d("resolveBody", "Rules for "+goal+" = "+rules.size());
+				for (Rule rule :rules) {
+					Goal ruleHead=rule.goal ;
+					Subgoal ruleSub=rule.subgoal;
 					//break if d_cut[0] or cut[0]
 					if (d_cut.get() || cut.get()) break;
 					List<Pair> trail = new Vector<Pair>();
-					if (unify(goal, env, d_head, d_env, trail, d_env)) {
-						if (d_body instanceof NativeSubgoal) {
-							NativeSubgoal d_b=(NativeSubgoal) d_body;
+					if (unify(goal, env, ruleHead, d_env, trail, d_env)) {
+						if (ruleSub instanceof NativeSubgoal) {
+							NativeSubgoal d_b=(NativeSubgoal) ruleSub;
 							d_b.run(new NativeSubgoalContext(d_env, trail, new Runnable(){
 								public void run() {
 									_resolve_body(rest, env, cut, it);
 								}
 							}));
 						} else {
-							GoalList cb=(GoalList)d_body;
+							GoalList cb=(GoalList)ruleSub;
 							_resolve_body(cb, d_env, d_cut ,new Runnable() {
 								@Override
 								public void run() {
