@@ -2,18 +2,18 @@ package jp.tonyu.soyprolog.core;
 
 import java.util.List;
 
-public class CallbackEnv {
+public class NativeSubgoalContext {
 	Env env;
-	List trail;
-	Runnable onFound;
+	List<Pair> trail;
+	Runnable yield;
 
-	public CallbackEnv(Env env,List trail,Runnable onFound) {
+	public NativeSubgoalContext(Env env,List<Pair> trail,Runnable yield) {
 		this.env=env;
 		this.trail=trail;
-		this.onFound=onFound;
+		this.yield=yield;
 	}
-	public Object a(Object t) {
-		return env.a(t);
+	public Object get(Object t) {
+		return env.get(t);
 	}
 	public boolean unify(Object t,Object u) {
 		return Resolver.unify(t, env, u, env, trail, env);

@@ -1,5 +1,5 @@
 package jp.tonyu.soyprolog.core;
 
-public interface SubGoal {
+public interface Subgoal {
 
 }

@@ -10,10 +10,10 @@ public class Env {
 	public Env() {
 		//@table = {}
 	}
-	public void put(Object x, Pair pair) {
+	public void putPair(Object x, Pair pair) {
         table.put(x,pair);
 	}
-    public Pair get(Object x) {
+    public Pair getPair(Object x) {
         return table.get(x);
     }
     public void delete(Object x) {
@@ -25,21 +25,24 @@ public class Env {
     public Pair dereference(Object t) {
         Env env = this;
         while (t instanceof Symbol) {
-            Pair p = env.get(t);
+            Pair p = env.getPair(t);
             if (p==null) break;
             t=p.value;
             env=p.env;
         }
         return new Pair(t, env);
     }
-    public Object a(Object t) { //[]
+    public void put(Object key, Object value) {
+    	putPair(key, new Pair(value,this));
+    }
+    public Object get(Object t) { //[]
         Pair p=dereference(t);
         t=p.value;
         Env env=p.env;
         if (t instanceof Goal) {
 //          when Goal then Goal.new(t.pred, env[t.args])
 			Goal g = (Goal) t;
-			return new Goal(g.pred, (List)env.a(g.args));
+			return new Goal(g.pred, (List)env.get(g.args));
 		}
         /* Cons Comment
         if (t instanceof Cons) {
@@ -52,7 +55,7 @@ public class Env {
 			List l = (List) t;
 			List res=new Vector();
 			for(Object e:l) {
-				res.add(env.a(e));
+				res.add(env.get(e));
 			}
 			return res;
 		}
@@ -65,7 +68,7 @@ public class Env {
     		Pair vp=table.get(k);
     		//b.append(k+"="+vp.env.dereference( vp.value ).value);
     		//b.append(k+"="+vp.env.a(vp.value));
-    		b.append(k+"="+a(k));
+    		b.append(k+"="+get(k));
     	}
     	return b+"";
     }

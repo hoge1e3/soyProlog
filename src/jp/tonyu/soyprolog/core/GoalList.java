@@ -2,7 +2,7 @@ package jp.tonyu.soyprolog.core;
 
 import java.util.List;
 
-public class GoalList implements SubGoal {
+public class GoalList implements Subgoal {
 	Goal car;
 	GoalList cdr;
 	public GoalList(Goal car, GoalList cdr) {

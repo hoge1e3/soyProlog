@@ -6,25 +6,33 @@ import java.util.List;
 import java.util.Vector;
 
 public class Goal {
-    public static final Object CUT = new Goal(Pred.CUT,new Vector());
+    public static final Goal CUT = new Goal(Pred.CUT,new Vector());
 	Pred pred;
     List args;
     public Goal(Pred pred, List args) {
     	this.pred=pred;
     	this.args=args;
     }
-    public void si(List rhs) {
-        pred.defs.add(  new Def( this, GoalList.create(rhs)) );
+    /*public Goal(Pred pred, Object[] args) {
+    	this.pred=pred;
+    	this.args=args;
+    }*/
+
+    public void trueIf(List rhs) {
+        pred.rules.add(  new Rule( this, GoalList.create(rhs)) );
     }
-    public void calls(CallbackEnvIter callback) {
-        pred.defs.add( new Def(this, callback) );
+    public void trueIf(Goal... rhs) {
+        pred.rules.add(  new Rule( this, GoalList.create(rhs)) );
+    }
+    public void calls(NativeSubgoal callback) {
+        pred.rules.add( new Rule(this, callback) );
     }
     @Override
     public String toString() {
     	return pred+"("+args+")";
     }
-	public void si() {
-        pred.defs.add(  new Def( this, GoalList.create()) );
+	public void isTrue() {
+        pred.rules.add(  new Rule( this, GoalList.create()) );
 	}
 
 }

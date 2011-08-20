@@ -1,6 +1,5 @@
 package jp.tonyu.soyprolog.core;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -14,14 +13,14 @@ public class Resolver {
 		debug("trail="+trail+" tmp_env="+tmp_env);
 		while(true) {
 			if (x instanceof Symbol) {
-				Pair xp = x_env.get(x);
+				Pair xp = x_env.getPair(x);
 				if (xp==null) {
 					//y, y_env = y_env.dereference(y)
 					Pair yp = y_env.dereference(y);
 					y=yp.value;
 					y_env=yp.env;
 					if (!( x.equals(y) && x_env.equals(y_env))) {
-						x_env.put(x, yp);
+						x_env.putPair(x, yp);
 						if (!(x_env == tmp_env)) {
 							trail.add( new Pair(x, x_env));
 						}
@@ -91,6 +90,14 @@ public class Resolver {
 			return x.equals(y);
 		}
 	}
+	public static void resolve(Goal goal, final EnvIter it) {
+		final Env env = new Env();
+		_resolve_body(new GoalList(goal,null), env, Ref.create(false), new Runnable() {
+			public void run() {
+				it.yield(env);
+			}
+		});
+	}
 	public static void resolve(List goals, final EnvIter it) {
 		final Env env = new Env();
 		_resolve_body(GoalList.create(goals), env, Ref.create(false), new Runnable() {
@@ -113,15 +120,15 @@ public class Resolver {
 			} else {
 				Env d_env = new Env();
 				final Ref<Boolean> d_cut = Ref.create(false);
-				for (Def d :goal.pred.defs) {
-					Goal d_head=d.head ;  Object d_body=d.body;
+				for (Rule d :goal.pred.rules) {
+					Goal d_head=d.goal ;  Object d_body=d.subgoal;
 					//break if d_cut[0] or cut[0]
 					if (d_cut.get() || cut.get()) break;
 					List<Pair> trail = new Vector<Pair>();
 					if (unify(goal, env, d_head, d_env, trail, d_env)) {
-						if (d_body instanceof CallbackEnvIter) {
-							CallbackEnvIter d_b=(CallbackEnvIter) d_body;
-							d_b.run(new CallbackEnv(d_env, trail, new Runnable(){
+						if (d_body instanceof NativeSubgoal) {
+							NativeSubgoal d_b=(NativeSubgoal) d_body;
+							d_b.run(new NativeSubgoalContext(d_env, trail, new Runnable(){
 								public void run() {
 									_resolve_body(rest, env, cut, it);
 								}
